@@ -22,6 +22,9 @@ type Plan = {
 
 export const Account = ({ user }: { user: User }) => {
   {
+    const [customer, setCustomer] = useState<Record<string, unknown> | null>(
+      null,
+    )
     const [plans, setPlans] = useState<Plan[]>([])
     const searchParams = useSearchParams()
     const canceled = searchParams.get('canceled')
@@ -48,6 +51,16 @@ export const Account = ({ user }: { user: User }) => {
       fetch('/api/plans')
         .then((res) => res.json())
         .then((data) => setPlans(data))
+
+      fetch('/api/customer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user.email }),
+      })
+        .then((res) => res.json())
+        .then((data) => setCustomer(data))
     }, [])
 
     const handleSubscribe = async (priceId: string) => {
@@ -89,6 +102,7 @@ export const Account = ({ user }: { user: User }) => {
           </div>
         </div>
         <div className="flex flex-col gap-4 my-8">
+          <pre>{JSON.stringify(customer, null, 2)}</pre>
           <h2 className="font-bold text-2xl mb-4">
             Choose a Subscription Plan
           </h2>
