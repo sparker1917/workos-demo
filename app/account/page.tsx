@@ -2,7 +2,7 @@ import { withAuth } from '@workos-inc/authkit-nextjs'
 import { Account } from '@/components/account'
 
 export default async function AccountPage() {
-  const { user, sessionId } = await withAuth()
+  const { user } = await withAuth()
 
-  return <Account sessionId={sessionId!} user={user!} />
+  return <Account user={user!} />
 }
