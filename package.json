@@ -12,6 +12,7 @@
     "@stripe/react-stripe-js": "^3.5.1",
     "@stripe/stripe-js": "^6.1.0",
     "@workos-inc/authkit-nextjs": "^2.1.0",
+    "@workos-inc/node": "^7.44.0",
     "next": "15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
-import { getSignInUrl, withAuth, signOut } from '@workos-inc/authkit-nextjs'
+import { getSignInUrl, withAuth } from '@workos-inc/authkit-nextjs'
+import { SignoutButton } from './signout-button'
 
 export const Home = async () => {
   const { user } = await withAuth()
@@ -12,23 +13,14 @@ export const Home = async () => {
       {user ? (
         <div className="flex flex-col gap-2 justify-center items-center">
           <h2>Welcome back, {user.firstName}!</h2>
-          <div className="flex gap-2">
-            <Link href="/account" className="hover:underline">
+          <div className="flex gap-4">
+            <Link
+              href="/account"
+              className="rounded-lg bg-foreground text-background py-2 px-4 hover:cursor-pointer"
+            >
               My Account
             </Link>
-            <form
-              action={async () => {
-                'use server'
-                await signOut()
-              }}
-            >
-              <button
-                className="hover:cursor-pointer hover:underline"
-                type="submit"
-              >
-                Sign out
-              </button>
-            </form>
+            <SignoutButton />
           </div>
         </div>
       ) : (
