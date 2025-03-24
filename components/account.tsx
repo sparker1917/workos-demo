@@ -2,18 +2,52 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+// import { useSearchParams } from 'next/navigation'
 import type { User } from '@workos-inc/node'
+import { useState, useEffect } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
 
-export const Account = ({
-  sessionId,
-  user,
-}: {
-  sessionId: string
-  user: User
-}) => {
-  const searchParams = useSearchParams()
-  const canceled = searchParams.get('canceled')
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
+)
+
+type Plan = {
+  id: string
+  name: string
+  description: string
+  price: number
+  interval: string
+  price_id: string
+}
+
+export const Account = ({ user }: { user: User }) => {
+  const [plans, setPlans] = useState<Plan[]>([])
+  // const searchParams = useSearchParams()
+  // const canceled = searchParams.get('canceled')
+
+  useEffect(() => {
+    // Fetch subscription plans from your API
+    fetch('/api/plans')
+      .then((res) => res.json())
+      .then((data) => setPlans(data))
+  }, [])
+
+  const handleSubscribe = async (priceId: string) => {
+    const stripe = await stripePromise
+    const { sessionId } = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ priceId }),
+    }).then((res) => res.json())
+
+    const result = await stripe?.redirectToCheckout({ sessionId })
+
+    if (result?.error) {
+      console.error(result.error)
+    }
+  }
 
   return (
     <div className="container mx-auto p-8">
@@ -37,18 +71,27 @@ export const Account = ({
         </div>
       </div>
       <div className="flex flex-col gap-4 my-8">
-        <form action="/api/checkout" method="POST">
-          {/* Add a hidden field with the lookup_key of your product */}
-          <input type="hidden" name="lookup_key" value="prod_S0F9oqtTwLloBt" />
-          <input type="hidden" name="session_id" value={sessionId} />
-          <button
-            type="submit"
-            className="rounded-lg bg-foreground text-background py-2 px-4 hover:cursor-pointer"
-          >
-            Subscribe $5 / month
-          </button>
-        </form>
-        {canceled && <div className="text-red-500">Payment canceled</div>}
+        <h2 className="font-bold text-2xl mb-4">Choose a Subscription Plan</h2>
+        <div className="grid grid-cols-3 gap-4">
+          {plans.map((plan) => (
+            <div key={plan.id}>
+              <h3 className="font-bold text-xl mb-2">{plan.name}</h3>
+              <p className="text-sm">{plan.description}</p>
+              <p>
+                Price:{' '}
+                <strong>
+                  ${plan.price / 100} / {plan.interval}
+                </strong>
+              </p>
+              <button
+                className="rounded-lg bg-foreground text-background py-2 px-4 hover:cursor-pointer mt-8"
+                onClick={() => handleSubscribe(plan.price_id)}
+              >
+                Subscribe
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
