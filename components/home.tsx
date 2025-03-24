@@ -12,19 +12,24 @@ export const Home = async () => {
       {user ? (
         <div className="flex flex-col gap-2 justify-center items-center">
           <h2>Welcome back, {user.firstName}!</h2>
-          <form
-            action={async () => {
-              'use server'
-              await signOut()
-            }}
-          >
-            <button
-              className="hover:cursor-pointer hover:underline"
-              type="submit"
+          <div className="flex gap-2">
+            <Link href="/account" className="hover:underline">
+              My Account
+            </Link>
+            <form
+              action={async () => {
+                'use server'
+                await signOut()
+              }}
             >
-              Sign out
-            </button>
-          </form>
+              <button
+                className="hover:cursor-pointer hover:underline"
+                type="submit"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col gap-2 justify-center items-center">
