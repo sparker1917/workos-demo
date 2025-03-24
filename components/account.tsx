@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-// import { useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import type { User } from '@workos-inc/node'
 import { useState, useEffect } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
@@ -22,8 +22,8 @@ type Plan = {
 
 export const Account = ({ user }: { user: User }) => {
   const [plans, setPlans] = useState<Plan[]>([])
-  // const searchParams = useSearchParams()
-  // const canceled = searchParams.get('canceled')
+  const searchParams = useSearchParams()
+  const canceled = searchParams.get('canceled')
 
   useEffect(() => {
     // Fetch subscription plans from your API
@@ -92,6 +92,7 @@ export const Account = ({ user }: { user: User }) => {
             </div>
           ))}
         </div>
+        {canceled && <p className="text-red-500">Payment canceled.</p>}
       </div>
     </div>
   )
