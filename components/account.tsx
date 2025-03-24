@@ -1,9 +1,9 @@
-// 'use client'
+'use client'
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import type { User } from '@workos-inc/node'
-import { SignoutButton } from './signout-button'
 
 export const Account = ({
   sessionId,
@@ -12,6 +12,9 @@ export const Account = ({
   sessionId: string
   user: User
 }) => {
+  const searchParams = useSearchParams()
+  const canceled = searchParams.get('canceled')
+
   return (
     <div className="container mx-auto p-8">
       <Link href="/">&laquo; Go Back</Link>
@@ -33,8 +36,7 @@ export const Account = ({
           <p className="text-stone-500">{user?.email}</p>
         </div>
       </div>
-      <div className="flex gap-4 my-8">
-        <SignoutButton />
+      <div className="flex flex-col gap-4 my-8">
         <form action="/api/checkout" method="POST">
           {/* Add a hidden field with the lookup_key of your product */}
           <input type="hidden" name="lookup_key" value="prod_S0F9oqtTwLloBt" />
@@ -46,6 +48,7 @@ export const Account = ({
             Subscribe $5 / month
           </button>
         </form>
+        {canceled && <div className="text-red-500">Payment canceled</div>}
       </div>
     </div>
   )
