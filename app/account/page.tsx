@@ -24,16 +24,28 @@ export default async function AccountPage() {
           <p className="text-stone-500">{user?.email}</p>
         </div>
       </div>
-      <form
-        action={async () => {
-          'use server'
-          await signOut()
-        }}
-      >
-        <button className="rounded-lg bg-red-600 text-white my-8 py-2 px-4 hover:cursor-pointer">
-          Sign out
-        </button>
-      </form>
+      <div className="flex gap-2 my-8">
+        <form
+          action={async () => {
+            'use server'
+            await signOut()
+          }}
+        >
+          <button className="rounded-lg bg-red-600 text-white py-2 px-4 hover:cursor-pointer">
+            Sign out
+          </button>
+        </form>
+        <form action="/api/checkout" method="POST">
+          {/* Add a hidden field with the lookup_key of your Price */}
+          <input type="hidden" name="lookup_key" value="prod_S0F9oqtTwLloBt" />
+          <button
+            type="submit"
+            className="rounded-lg bg-foreground text-background py-2 px-4 hover:cursor-pointer"
+          >
+            Subscribe $5 / month
+          </button>
+        </form>
+      </div>
     </div>
   )
 }
